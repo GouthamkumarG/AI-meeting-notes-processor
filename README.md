@@ -195,7 +195,7 @@ Goutham Gorthi — AI Engineer and Full Stack Developer
 Open to AI Engineer, AI Automation, and Full Stack Developer roles
 across the UK. Available immediately.
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/gouthamchowdary)
+[![LinkedIn](https://www.linkedin.com/in/goutham-chowdary-679744280/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GouthamkumarG)
 
 ---
