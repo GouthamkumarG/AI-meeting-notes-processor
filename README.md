@@ -1,185 +1,205 @@
 <div align="center">
-<img src="https://capsule-render.vercel.app/api?type=venom&color=0:0d1117,30:0a0a2e,60:0d1b4b,100:0a192f&height=280&section=header&text=AI%20Meeting%20Notes%20Processor&fontSize=45&fontColor=00d4ff&animation=fadeIn&fontAlignY=38&desc=End-to-End%20Agentic%20Pipeline%20%E2%80%A2%20RAG%20%E2%80%A2%20Multi-Tool%20Orchestration%20%E2%80%A2%20Zero%20Manual%20Intervention&descAlignY=60&descSize=15&descColor=93c5fd" width="100%"/>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:16213e&height=200&section=header&text=AI%20Meeting%20Notes&fontSize=55&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Agentic%20Meeting%20Intelligence%20Pipeline&descAlignY=55&descSize=18&descColor=a0aec0"/>
+
 <br/>
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
+
+[![N8N](https://img.shields.io/badge/N8N-Workflow%20Automation-EA4B71?style=for-the-badge&logo=n8n&logoColor=white)](https://n8n.io)
+[![Claude AI](https://img.shields.io/badge/Claude%20Haiku-AI%20Extraction-D97706?style=for-the-badge&logo=anthropic&logoColor=white)](https://anthropic.com)
+[![Supabase](https://img.shields.io/badge/Supabase-RAG%20Memory-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
+[![Notion](https://img.shields.io/badge/Notion-Action%20Items-000000?style=for-the-badge&logo=notion&logoColor=white)](https://notion.so)
+[![Gmail](https://img.shields.io/badge/Gmail-Meeting%20Summary-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](https://gmail.com)
+
 <br/>
-Show Image
-Show Image
-</div>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> What This Does
-<table>
-<tr>
-<td width="60%" valign="top">
-Drop in a raw, unstructured meeting transcript. The pipeline does the rest.
-Claude reads the transcript, retrieves context from past meetings via RAG, extracts every action item, decision, and owner — then routes them to Notion and dispatches a formatted email summary. Fully automated. Zero manual intervention.
-This is not a simple API call. This is a production-grade agentic system — with retrieval, reasoning, error handling, structured output parsing, and multi-tool action execution chained together.
-</td>
-<td width="40%" valign="top">
-Pipeline highlights:
-✅  RAG context from past meetings
-✅  LLM-powered extraction (Claude)
-✅  Structured JSON output parsing
-✅  IF node error handling
-✅  Auto Notion task creation
-✅  Gmail summary dispatch
-✅  Webhook + Schedule dual trigger
-✅  Extensible to Slack, Jira, Teams
-</td>
-</tr>
-</table>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Pipeline Architecture
-┌─────────────────────────────────────────────────────────────────┐
-│                    TRIGGER LAYER                                 │
-│         Webhook (real-time)  ◆  Schedule Trigger (9am daily)   │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    RAG INGESTION                                 │
-│           HTTP Request1 → Store transcript in Supabase          │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    RAG RETRIEVAL                                 │
-│        HTTP Request2 → Fetch last 3 transcripts from Supabase   │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    PROMPT ENGINEERING                            │
-│     Code Node → Build contextual prompt with past + new data    │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    LLM REASONING                                 │
-│         Claude Haiku → Extract action items + summary           │
-└─────────────────────┬───────────────────────────────────────────┘
-                      │
-                      ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    OUTPUT VALIDATION                             │
-│         Code Node → Parse JSON  ◆  IF Node → Error check        │
-└──────────────┬──────────────────────────────┬───────────────────┘
-               │                              │
-               ▼                              ▼
-┌──────────────────────────┐    ┌─────────────────────────────────┐
-│      NOTION TASKS        │    │        GMAIL SUMMARY            │
-│  Split Out → Create one  │    │  Send formatted HTML summary    │
-│  row per action item     │    │  with all action items          │
-└──────────────────────────┘    └─────────────────────────────────┘
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Pipeline Screenshot
-Show Image
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Key Features
-<div align="center">
-FeatureWhat It Does🧠 RAG ArchitectureStores every transcript in Supabase. Retrieves last 3 before each run. Claude gets historical context — not just the current meeting🤖 LLM ExtractionClaude Haiku extracts tasks, owners, and deadlines from unstructured natural language with high reliability🛡️ Error HandlingIF node validates Claude's JSON output. Malformed responses stop the pipeline gracefully📋 Notion IntegrationOne database row per action item, auto-mapped to Name, Owner, and Due Date columns📧 Email DispatchFormatted HTML summary sent once per meeting run⚡ Dual TriggerWebhook for real-time ingestion. Schedule trigger for daily automated runs🔗 ExtensibleCore pipeline logic unchanged when adding Slack, Jira, Teams, or any other tool🎯 Prompt EngineeringContext-injected prompt built dynamically — past transcripts + new transcript combined before Claude call
-</div>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Live Outputs
-<table>
-<tr>
-<td width="50%">
-Notion — Auto-Created Tasks
-Show Image
-</td>
-<td width="50%">
-Gmail — Summary Email
-Show Image
-</td>
-</tr>
-<tr>
-<td width="50%">
-Supabase — RAG Storage
-Show Image
-</td>
-<td width="50%">
-Webhook — Test Trigger
-Show Image
-</td>
-</tr>
-</table>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Tech Stack
-<div align="center">
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-Show Image
-</div>
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Setup Guide
-Prerequisites
 
-N8N account (cloud or self-hosted)
-Anthropic API key → console.anthropic.com
-Notion account + integration token → notion.so/profile/integrations
-Supabase project → supabase.com
-Gmail account with OAuth connected in N8N
+> Post your transcript. Get structured notes. Never take manual meeting notes again.
+>
+> An end-to-end agentic AI pipeline that receives raw meeting transcripts,
+> extracts action items with owners and due dates, stores context for future meetings,
+> syncs everything to Notion, and emails a clean summary — automatically.
 
-Step 1 — Supabase
-Create a table named transcripts with columns: id (int8), created_at (timestamptz), transcript (text). Disable Row Level Security.
-Step 2 — Notion
-Create a database named Meeting Action Items with columns: Name (Title), Owner (Text), Due Date (Text). Connect your N8N integration via ... → Connections.
-Step 3 — Import Workflow
-
-Download workflow.json
-In N8N → New Workflow → ... → Import from file
-Replace all placeholders:
-
-PlaceholderReplace WithYOUR_ANTHROPIC_API_KEYYour Anthropic API keyYOUR_SUPABASE_URLYour Supabase project URLYOUR_SUPABASE_ANON_KEYYour Supabase anon public keyYOUR_NOTION_DATABASE_IDYour Notion database ID from URLYOUR_WEBHOOK_PATHAny unique path stringYOUR_EMAIL@gmail.comYour Gmail address
-Step 4 — Test
-bashcurl -X POST https://your-n8n-instance/webhook/YOUR_WEBHOOK_PATH \
-  -H "Content-Type: application/json" \
-  -d '{"transcript": "Alex will fix the login bug before Thursday demo. Priya will update the pitch deck with new pricing by tomorrow. We decided to postpone the launch to next Monday."}'
-Check Notion for new tasks and Gmail for the summary email.
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Prompt Engineering
-javascriptconst pastTranscripts = $('HTTP Request2').all()
-  .map(t => t.json.transcript).join(' | ');
-
-const newTranscript = $('Webhook').first().json.body.transcript;
-
-const prompt = 'Past meetings context: ' + pastTranscripts +
-  '. Extract action items from this new transcript. ' +
-  'Return ONLY valid JSON: ' +
-  '{"action_items": [{"task": "", "owner": "", "due_date": ""}], "summary": ""}. ' +
-  'New transcript: ' + newTranscript;
-
-const body = {
-  model: "claude-haiku-4-5-20251001",
-  max_tokens: 1024,
-  messages: [{ role: "user", content: prompt }]
-};
-
-return [{ json: { body: JSON.stringify(body) } }];
-Past transcripts retrieved from Supabase are prepended as context — enabling Claude to identify follow-up tasks, recurring owners, and cross-meeting continuity.
-<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
-> Author
-<div align="center">
-Goutham Chowdary
-AI-Powered Developer · Full Stack Engineer · Automation Architect
 <br/>
-Show Image
-Show Image
-Show Image
+
+![Pipeline Demo](https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&duration=2000&pause=500&color=16A34A&center=true&vCenter=true&multiline=true&repeat=true&width=650&height=100&lines=Receiving+raw+meeting+transcript+via+webhook...;Extracting+action+items+with+Claude+AI...;Syncing+tasks+to+Notion+and+delivering+summary...)
+
 </div>
+
+---
+
+## What Is This?
+
+Most meeting notes are broken.
+
+Someone writes them half-heartedly during the call, action items get buried in a wall
+of text, owners are ambiguous, due dates are missing, and by next week nobody
+remembers what was agreed. The same topics come up again because nothing was tracked.
+
+This pipeline fixes all of that automatically.
+
+Send a raw transcript to the webhook and within seconds Claude extracts every action
+item with its owner and due date, stores the transcript in Supabase so future
+meetings have full context of what was previously discussed, creates individual task
+cards in Notion for each action item, and fires a clean HTML summary email — all
+without touching a single tool manually.
+
+---
+
+## How The Pipeline Works
+
+~~~
++------------------------------------------------------------------+
+|                                                                  |
+|   Webhook            Supabase             Supabase               |
+|   Receives   --->    Saves New   --->     Fetches Last           |
+|   Transcript          Transcript           3 Transcripts         |
+|                                            (RAG Context)         |
+|                                                                  |
+|                           |                                      |
+|                           v                                      |
+|                                                                  |
+|   Claude              JavaScript          JavaScript             |
+|   Haiku AI   <---     Prompt     <---    Formatter               |
+|   Extracts            Builder             Combines context       |
+|   Action Items                            and transcript         |
+|                                                                  |
+|                           |                                      |
+|                           v                                      |
+|                                                                  |
+|   Notion              Gmail               If Node                |
+|   Task Cards  <---    Summary    <---     Checks for             |
+|   Per Item            Email               Action Items           |
+|                                                                  |
++------------------------------------------------------------------+
+~~~
+
+---
+
+## Step By Step Breakdown
+
+### Step 1 - Webhook Trigger
+
+A POST request to the N8N webhook endpoint delivers the raw meeting transcript
+as a JSON body. Any recording tool, Zapier, or a simple curl command can trigger it.
+No manual login or copy-paste required.
+
+### Step 2 - Supabase Transcript Storage
+
+The incoming transcript is immediately saved to a Supabase PostgreSQL table.
+Every meeting is persisted so the pipeline builds a growing memory of past discussions
+that can be referenced in future sessions.
+
+### Step 3 - RAG Context Retrieval
+
+Supabase is queried for the three most recent transcripts ordered by creation date.
+These are passed alongside the new transcript into Claude so it understands prior
+commitments, repeated topics, and ongoing threads — not just the current meeting in isolation.
+
+### Step 4 - JavaScript Prompt Builder
+
+A JavaScript node assembles a structured prompt combining the past meeting context
+and the new transcript. Claude is instructed to return only valid JSON with no
+preamble or markdown — clean structured output every time.
+
+### Step 5 - Claude Haiku AI Extraction
+
+The core of the pipeline. Claude receives the full prompt and returns a structured
+JSON object with two fields:
+
+- action_items is an array where each item has a task description, an owner name, and a due date
+- summary is a concise paragraph capturing the key decisions and outcomes of the meeting
+
+Claude uses the past transcript context to resolve ambiguous ownership references
+and carry forward any unresolved items from prior meetings.
+
+### Step 6 - JavaScript Parser
+
+Parses and cleans the raw Claude response, stripping any accidental markdown fences,
+and passes the structured object downstream. An If node checks whether any action
+items were extracted before triggering the Notion and Gmail branches.
+
+### Step 7 - Notion Task Creation
+
+Each action item is split out individually and written as a separate database page
+in Notion with the task title, owner, and due date populated as properties. Every
+meeting produces a clean set of trackable cards without any manual entry.
+
+### Step 8 - Gmail Summary Email
+
+A formatted HTML email is sent automatically with the meeting summary paragraph
+followed by a structured list of all action items showing task, owner, and due date.
+Delivered to your inbox within seconds of the transcript arriving.
+
+---
+
+## Key Features
+
+| Feature | What It Does |
+|---|---|
+| RAG Memory | Uses last 3 meeting transcripts as context for smarter extraction |
+| Action Item Extraction | Pulls every task with owner and due date from raw transcript |
+| Notion Sync | Creates individual database cards for each action item automatically |
+| Gmail Summary | Sends a clean HTML summary email immediately after processing |
+| Supabase Storage | Persists every transcript for growing meeting memory over time |
+| Conditional Branching | Only triggers Notion and email if action items are actually found |
+| Zero Manual Input | Transcript in — structured notes out, end to end |
+| JSON Output | Claude returns clean structured JSON, no parsing guesswork |
+| Contextual Intelligence | Past meeting context prevents duplicate tasks and resolves owner ambiguity |
+| Webhook Trigger | Works with any tool that can send a POST request |
+
+---
+
+## Tech Stack
+
+~~~javascript
+const pipeline = {
+  orchestration : "N8N Cloud",
+  ai            : "Claude Haiku API (Anthropic)",
+  memory        : "Supabase PostgreSQL (RAG)",
+  taskTracking  : "Notion API (OAuth2)",
+  delivery      : "Gmail via N8N",
+  trigger       : "N8N Webhook",
+  formatting    : "JavaScript (Node.js)",
+}
+~~~
+
+---
+
+## Repository Structure
+
+~~~
+ai-meeting-notes-processor/
+├── workflow/
+│   └── workflow.json           <- N8N workflow export
+├── assets/
+│   └── pipeline.png            <- N8N pipeline screenshot
+└── README.md
+~~~
+
+---
+
+## How To Use This
+
+1. Import workflow.json into your N8N instance
+2. Connect your Anthropic, Supabase, Notion, and Gmail credentials
+3. Create a transcripts table in Supabase with a transcript text column and created_at timestamp
+4. Create a Notion database with Task, Owner, and Due Date properties
+5. Update the webhook path and your email address in the relevant nodes
+6. Activate the workflow and send a POST request with your transcript to start
+
+---
+
+## Built By
+
+Goutham Gorthi — AI Engineer and Full Stack Developer
+
+Open to AI Engineer, AI Automation, and Full Stack Developer roles
+across the UK. Available immediately.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/gouthamchowdary)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/GouthamkumarG)
+
+---
+
 <div align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,50:0a0a2e,100:0d1b4b&height=120&section=footer&text=Star+this+repo+if+it+helped+you+%E2%AD%90&fontSize=15&fontColor=00d4ff&animation=fadeIn&fontAlignY=65" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:16213e,100:1a1a2e&height=100&section=footer"/>
 </div>
