@@ -1,0 +1,284 @@
+{
+  "name": "AI Meeting Notes Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "YOUR_WEBHOOK_PATH",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [0, 0],
+      "id": "3be6e0f1-87d6-4158-8ba5-e541c17c50cb",
+      "name": "Webhook",
+      "webhookId": "YOUR_WEBHOOK_PATH"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "YOUR_ANTHROPIC_API_KEY"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $('Code in JavaScript1').first().json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [832, 0],
+      "id": "6ccb4785-0e49-48ad-b880-365ed24aca73",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.content[0].text;\nconst cleaned = raw.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\nconst parsed = JSON.parse(cleaned);\nreturn [{ json: parsed }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 0],
+      "id": "fb24488d-cbfd-476d-9834-b6ea107a6086",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "action_items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1408, -192],
+      "id": "87691ecd-0bbf-429c-9cf5-6a03ab07cbe5",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "YOUR_NOTION_DATABASE_ID",
+          "mode": "list",
+          "cachedResultName": "Meeting Action Items",
+          "cachedResultUrl": "https://app.notion.com/p/YOUR_NOTION_DATABASE_ID"
+        },
+        "title": "={{ $json.task }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Owner|rich_text",
+              "textContent": "={{ $json.owner }}"
+            },
+            {
+              "key": "Due Date|rich_text",
+              "textContent": "={{ $json.due_date }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [1616, 64],
+      "id": "f48362d0-6b66-44ed-8147-b86dbdbd0f84",
+      "name": "Create a database page",
+      "credentials": {
+        "notionOAuth2Api": {
+          "id": "YOUR_NOTION_CREDENTIAL_ID",
+          "name": "Notion OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_EMAIL@gmail.com",
+        "subject": "=Meeting Summary - {{ $now.toFormat('dd MMM yyyy') }}",
+        "message": "=<h2>Meeting Summary</h2>\n<p>{{ $('Code in JavaScript').first().json.summary }}</p>\n\n<h3>Action Items</h3>\n<ul>\n{{ $('Code in JavaScript').first().json.action_items.map(item => `<li><b>${item.task}</b> — ${item.owner} (Due: ${item.due_date})</li>`).join('') }}\n</ul>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [1408, 272],
+      "id": "ef50cf2e-1e39-466c-af7e-c33663587ef9",
+      "name": "Send a message",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dba65dda-ec8e-4067-aec9-0f3d0c38bc3f",
+              "leftValue": "={{ $json.action_items.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [1232, 0],
+      "id": "b6e9b610-d0c4-4484-9a90-c979b28b3929",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [192, -256],
+      "id": "0b9be4d9-1637-4338-929d-64477ca24276",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "YOUR_SUPABASE_URL/rest/v1/transcripts",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "YOUR_SUPABASE_ANON_KEY"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUPABASE_ANON_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"transcript\": \"{{ $json.body.transcript }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [208, 0],
+      "id": "91cf316c-b675-4373-8273-7d658db85792",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "url": "YOUR_SUPABASE_URL/rest/v1/transcripts?order=created_at.desc&limit=3",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "YOUR_SUPABASE_ANON_KEY"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_SUPABASE_ANON_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [416, 0],
+      "id": "d1482af4-b908-42bd-a663-7c4a9e4e8334",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pastTranscripts = $('HTTP Request2').all().map(t => t.json.transcript).join(' | ');\nconst newTranscript = $('Webhook').first().json.body.transcript;\n\nconst prompt = 'Past meetings context: ' + pastTranscripts + '. Extract action items from this new transcript. Return ONLY valid JSON: {\"action_items\": [{\"task\": \"\", \"owner\": \"\", \"due_date\": \"\"}], \"summary\": \"\"}. New transcript: ' + newTranscript;\n\nconst body = {\n  model: \"claude-haiku-4-5-20251001\",\n  max_tokens: 1024,\n  messages: [{ role: \"user\", content: prompt }]\n};\n\nreturn [{ json: { body: JSON.stringify(body) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [624, 0],
+      "id": "17450750-3c78-4f17-a7ff-b51e41870f17",
+      "name": "Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "HTTP Request1", "type": "main", "index": 0}]]
+    },
+    "HTTP Request": {
+      "main": [[{"node": "Code in JavaScript", "type": "main", "index": 0}]]
+    },
+    "Code in JavaScript": {
+      "main": [[{"node": "If", "type": "main", "index": 0}]]
+    },
+    "Split Out": {
+      "main": [[{"node": "Create a database page", "type": "main", "index": 0}]]
+    },
+    "If": {
+      "main": [
+        [
+          {"node": "Split Out", "type": "main", "index": 0},
+          {"node": "Send a message", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [[{"node": "HTTP Request", "type": "main", "index": 0}]]
+    },
+    "HTTP Request1": {
+      "main": [[{"node": "HTTP Request2", "type": "main", "index": 0}]]
+    },
+    "HTTP Request2": {
+      "main": [[{"node": "Code in JavaScript1", "type": "main", "index": 0}]]
+    },
+    "Code in JavaScript1": {
+      "main": [[{"node": "HTTP Request", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": []
+}
